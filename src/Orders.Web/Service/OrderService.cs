@@ -11,11 +11,13 @@ public class OrderService : IOrderService
 {
     private readonly IReadRepository<Order> _orderReadRepository;
     private readonly IRepository<Order> _orderRepository;
+    private readonly ICatalogueService _catalogueService;
 
-    public OrderService(IReadRepository<Order> orderReadRepository, IRepository<Order> orderRepository)
+    public OrderService(IReadRepository<Order> orderReadRepository, IRepository<Order> orderRepository, ICatalogueService catalogueService)
     {
         _orderReadRepository = orderReadRepository;
         _orderRepository = orderRepository;
+        _catalogueService = catalogueService;
     }
 
 

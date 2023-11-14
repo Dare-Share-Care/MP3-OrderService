@@ -36,6 +36,7 @@ builder.Services.AddDbContext<OrderContext>(options =>
 
 //Domain services
 builder.Services.AddScoped(typeof(IOrderService), typeof(OrderService));
+builder.Services.AddScoped(typeof(ICatalogueService), typeof(CatalogueService));
 
 //Kafka Producer
 // builder.Services.AddHostedService<InsertKafkaProducer>();
