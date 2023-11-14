@@ -22,7 +22,7 @@ public class OrderContext : DbContext
         
         //OrderLine ProductPrice
         modelBuilder.Entity<OrderLine>()
-            .Property(ol => ol.ProductPrice)
+            .Property(ol => ol.Price)
             .HasColumnType("decimal(18,2)");
         
         //Relationships

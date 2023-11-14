@@ -13,7 +13,8 @@ public class OrderService : IOrderService
     private readonly IRepository<Order> _orderRepository;
     private readonly ICatalogueService _catalogueService;
 
-    public OrderService(IReadRepository<Order> orderReadRepository, IRepository<Order> orderRepository, ICatalogueService catalogueService)
+    public OrderService(IReadRepository<Order> orderReadRepository, IRepository<Order> orderRepository,
+        ICatalogueService catalogueService)
     {
         _orderReadRepository = orderReadRepository;
         _orderRepository = orderRepository;
@@ -67,6 +68,50 @@ public class OrderService : IOrderService
 
     public async Task<OrderDto> CreateOrderAsync(CreateOrderDto orderDto)
     {
-        throw new NotImplementedException();
+        var catalogue = await _catalogueService.GetCatalogAsync();
+
+        //Validate products exist in catalogue
+        var productIds = catalogue.Select(product => product.Id).ToList();
+        var invalidProductIds = orderDto.Lines.Select(line => line.ProductId).Except(productIds).ToList();
+        if (invalidProductIds.Any()) throw new ProductsNotFoundException(invalidProductIds);
+        
+        //Validate if available stock
+        var invalidQuantities = orderDto.Lines.Where(line => line.Quantity <= 0).ToList();
+        if (invalidQuantities.Any()) throw new InvalidQuantitiesException(invalidQuantities);
+
+        //Create order
+        var order = new Order
+        {
+            CustomerId = orderDto.CustomerId,
+            OrderDate = DateTime.UtcNow,
+            OrderLines = orderDto.Lines.Select(line => new OrderLine
+            {
+                ProductId = line.ProductId,
+                ProductName = catalogue.Single(product => product.Id == line.ProductId).Name,
+                Price = catalogue.Single(product => product.Id == line.ProductId).Price * line.Quantity,
+                Quantity = line.Quantity
+            }).ToList()
+        };
+
+        //Save order
+        await _orderRepository.AddAsync(order);
+        await _orderRepository.SaveChangesAsync();
+
+        //Map to DTO
+        var orderDtoResult = new OrderDto
+        {
+            Id = order.Id,
+            Created = order.OrderDate,
+            Lines = order.OrderLines.Select(orderLine => new OrderLineDto
+            {
+                Id = orderLine.Id,
+                ProductId = orderLine.ProductId,
+                Quantity = orderLine.Quantity,
+                ProductName = catalogue.Single(product => product.Id == orderLine.ProductId).Name,
+                Price = catalogue.Single(product => product.Id == orderLine.ProductId).Price * orderLine.Quantity
+            }).ToList()
+        };
+
+        return orderDtoResult;
     }
 }

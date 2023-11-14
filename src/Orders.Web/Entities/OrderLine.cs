@@ -6,6 +6,6 @@ public class OrderLine : BaseEntity
     public Order Order { get; set; } = null!;
     public int ProductId { get; set; }
     public string ProductName { get; set; } = null!;
-    public decimal ProductPrice { get; set; }
+    public decimal Price { get; set; }
     public int Quantity { get; set; }
 }
