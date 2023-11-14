@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Orders.Web.Data;
 using Orders.Web.Interface.DomainServices;
 using Orders.Web.Interface.Repositories;
+using Orders.Web.Producer;
 using Orders.Web.Service;
 
 
@@ -39,7 +40,7 @@ builder.Services.AddScoped(typeof(IOrderService), typeof(OrderService));
 builder.Services.AddScoped(typeof(ICatalogueService), typeof(CatalogueService));
 
 //Kafka Producer
-// builder.Services.AddHostedService<InsertKafkaProducer>();
+builder.Services.AddSingleton<KafkaProducer>();
 
 //Build repositories
 builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));

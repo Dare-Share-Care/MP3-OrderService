@@ -6,7 +6,7 @@ namespace Orders.Web.Producer;
 public class KafkaProducer : IDisposable
 {
     private readonly IProducer<string, string> _producer;
-    private const string BootstrapServers = "localhost:9092";
+    private const string BootstrapServers = "localhost:29094";
     
     public KafkaProducer()
     {

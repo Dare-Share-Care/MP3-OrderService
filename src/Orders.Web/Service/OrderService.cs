@@ -3,6 +3,7 @@ using Orders.Web.Exceptions;
 using Orders.Web.Interface.DomainServices;
 using Orders.Web.Interface.Repositories;
 using Orders.Web.Model.Dto;
+using Orders.Web.Producer;
 using Orders.Web.Specifications;
 
 namespace Orders.Web.Service;
@@ -12,13 +13,15 @@ public class OrderService : IOrderService
     private readonly IReadRepository<Order> _orderReadRepository;
     private readonly IRepository<Order> _orderRepository;
     private readonly ICatalogueService _catalogueService;
+    private readonly KafkaProducer _kafkaProducer;
 
     public OrderService(IReadRepository<Order> orderReadRepository, IRepository<Order> orderRepository,
-        ICatalogueService catalogueService)
+        ICatalogueService catalogueService, KafkaProducer kafkaProducer)
     {
         _orderReadRepository = orderReadRepository;
         _orderRepository = orderRepository;
         _catalogueService = catalogueService;
+        _kafkaProducer = kafkaProducer;
     }
 
 
@@ -111,7 +114,16 @@ public class OrderService : IOrderService
                 Price = catalogue.Single(product => product.Id == orderLine.ProductId).Price * orderLine.Quantity
             }).ToList()
         };
+        
+        //Send order created event
+        await SendOrderCreatedEventAsync(orderDtoResult);
 
+        //Return order
         return orderDtoResult;
+    }
+
+    private async Task SendOrderCreatedEventAsync(OrderDto orderDto)
+    {
+        await _kafkaProducer.ProduceAsync("mp3-create-order", orderDto);
     }
 }
