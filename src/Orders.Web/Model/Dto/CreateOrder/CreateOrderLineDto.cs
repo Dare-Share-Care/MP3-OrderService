@@ -1,4 +1,4 @@
-namespace Orders.Web.Model.Dto;
+namespace Orders.Web.Model.Dto.CreateOrder;
 
 public class CreateOrderLineDto
 {

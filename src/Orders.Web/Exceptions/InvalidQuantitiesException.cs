@@ -1,4 +1,4 @@
-using Orders.Web.Model.Dto;
+using Orders.Web.Model.Dto.CreateOrder;
 
 namespace Orders.Web.Exceptions;
 

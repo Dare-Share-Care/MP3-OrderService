@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Orders.Web.Interface.DomainServices;
-using Orders.Web.Model.Dto;
+using Orders.Web.Model.Dto.CreateOrder;
 
 namespace Orders.Web.Controller;
 

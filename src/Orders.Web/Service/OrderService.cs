@@ -3,6 +3,7 @@ using Orders.Web.Exceptions;
 using Orders.Web.Interface.DomainServices;
 using Orders.Web.Interface.Repositories;
 using Orders.Web.Model.Dto;
+using Orders.Web.Model.Dto.CreateOrder;
 using Orders.Web.Producer;
 using Orders.Web.Specifications;
 
